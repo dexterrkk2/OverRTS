@@ -13,7 +13,8 @@ public class Interactable : MonoBehaviour, ICanInteract
     public GameObject chef;
     bool selected;
     float clickRadius = 2;
-    public float JobTime;
+    public float jobTime;
+    public float coolDown;
     float timer;
     public float iterrationsToIncrease;
     float iterrations;
@@ -45,7 +46,7 @@ public class Interactable : MonoBehaviour, ICanInteract
     void Start()
     {
         IChef = chef.GetComponent<IChef>();
-        timer = JobTime;
+        timer = coolDown;
         iterrations = 0;
     }
     void Update()
@@ -58,7 +59,7 @@ public class Interactable : MonoBehaviour, ICanInteract
         {
             RunJob(IChef);
             selected = false;
-            timer = JobTime;
+            timer = coolDown;
         }
         if (pointHit && mousePressed)
         {
