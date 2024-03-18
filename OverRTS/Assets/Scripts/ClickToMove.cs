@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,10 +10,12 @@ public class ClickToMove : MonoBehaviour
     Camera camera;
     float clickRadius = 2;
     bool selected;
+    public float speed;
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         camera = Camera.main;
+        agent.speed = speed;
     }
     private void Update()
     {
@@ -21,6 +24,9 @@ public class ClickToMove : MonoBehaviour
         if (mousePressed && pointHit && selected)
         {
             agent.SetDestination(MousePosition.mousePoint);
+            float timeToPoint = agent.speed * agent.remainingDistance; 
+            Grid.RemoveFromGrid(gameObject, true);
+
             selected = false;
         }
         if (pointHit && mousePressed)
