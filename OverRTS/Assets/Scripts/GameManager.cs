@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
     public Grid grid;
     public List<GameObject> interactables;
     public List<GameObject> chefs;
-   
+    public static int score = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,10 +26,14 @@ public class GameManager : MonoBehaviour
             Grid.PlaceOnGrid(thing, isChef);
         }
     }
-
     // Update is called once per frame
     void Update()
     {
         
+    }
+    public static void IncreaseScore()
+    {
+        score++;
+        Debug.Log("Score: " + score);
     }
 }

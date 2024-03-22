@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Services.Analytics.Internal;
 using UnityEngine;
+using TMPro;
 public interface ICanInteract
 {
     void RunJob(IChef chef);
 }
 public class Interactable : MonoBehaviour, ICanInteract
 {
+    public TextMeshProUGUI successText;
     public float failPercentage;
-    public IChef IChef;
-    public GameObject chef;
-    bool selected;
-    float clickRadius = 2;
     public float jobTime;
     public float coolDown;
     float timer;
@@ -20,39 +18,45 @@ public class Interactable : MonoBehaviour, ICanInteract
     float iterrations;
     public void RunJob(IChef chef)
     {
-        bool sucess = IChef.Action(failPercentage);
-        if (sucess)
+        //Debug.Log("Run Job");
+        //Debug.Log("TImer:" + timer);
+        if (timer <= 0)
         {
-            Debug.Log("success");
-            if (iterrations > iterrationsToIncrease)
+            bool sucess = chef.Action(failPercentage);
+            if (sucess)
             {
-                chef.IncreaseCompetency();
-                iterrations = 0;
+                successText.text = "Success";
+                if (iterrations > iterrationsToIncrease)
+                {
+                    chef.IncreaseCompetency();
+                    iterrations = 0;
+                }
+                GameManager.IncreaseScore();
             }
-        }
-        else
-        {
-            Debug.Log("Fail");
-            if (iterrations > iterrationsToIncrease)
+            else
             {
-                failPercentage++;
-                iterrations = 0;
+                successText.text = "Fail";
+                if (iterrations > iterrationsToIncrease)
+                {
+                    failPercentage++;
+                    iterrations = 0;
+                }
             }
+            iterrations++;
+            timer = coolDown;
         }
-        iterrations++;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        IChef = chef.GetComponent<IChef>();
         timer = coolDown;
         iterrations = 0;
     }
     void Update()
     {
         timer -= Time.deltaTime;
-        bool mousePressed = Input.GetMouseButtonDown(0);
+        /*bool mousePressed = Input.GetMouseButtonDown(0);
         bool pointHit = MousePosition.mousePoint != null;
         bool timerEnded = timer <= 0;
         if (mousePressed && pointHit && selected && timerEnded)
@@ -68,6 +72,6 @@ public class Interactable : MonoBehaviour, ICanInteract
             {
                 selected = true;
             }
-        }
+        }*/
     }
 }

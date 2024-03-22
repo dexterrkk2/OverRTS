@@ -8,22 +8,21 @@ using static UnityEngine.GraphicsBuffer;
 public class ClickToMove : MonoBehaviour
 {
     NavMeshAgent agent;
-    Camera camera;
     float clickRadius = 2;
     bool selected;
     public float speed;
-    public GameObject futurePoint;
     bool isplacingPoint;
+    public float gridOffset;
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        camera = Camera.main;
         agent.speed = speed;
         isplacingPoint = false;
     }
     private void Update()
     {
         bool mousePressed = Input.GetMouseButtonDown(0);
+        bool rightClick = Input.GetMouseButtonDown(1);
         bool pointHit = MousePosition.mousePoint != null;
         if (mousePressed && pointHit && selected)
         {
@@ -41,24 +40,36 @@ public class ClickToMove : MonoBehaviour
                 selected = true;
             }
         }
-        bool canPlacePoint = agent.pathPending == false && isplacingPoint == false && agent.hasPath == true;
+        bool canPlacePoint = (agent.pathPending == false && isplacingPoint == false && agent.hasPath && agent.remainingDistance != 0);
         if (canPlacePoint)
         {
-            Debug.Log(agent.remainingDistance);
-            float timeToPoint = agent.speed * agent.remainingDistance;
-            isplacingPoint = true;
-            Invoke("PlaceSelfOnGraph", timeToPoint);
+            //Debug.Log(agent.remainingDistance);
+            if (agent.remainingDistance < Mathf.Infinity)
+            {
+                float timeToPoint = agent.remainingDistance / agent.speed;
+                //Debug.Log(timeToPoint);
+                isplacingPoint = true;
+                Invoke("PlaceSelfOnGraph", timeToPoint);
+            }
+        }
+        if (rightClick)
+        {
+            selected = false;
         }
     }
     public void PlaceSelfOnGraph()
     {
-        Debug.Log("placingPoint");
-        bool isOnTarget = (transform.position - MousePosition.mousePoint).magnitude <= Grid.tileSize;
-        Debug.Log("is on target: " + isOnTarget);
+        //Debug.Log("placingPoint");
+        float distance = (transform.position - agent.destination).magnitude;
+        bool isOnTarget = distance-gridOffset <= Grid.tileSize;
+        //Debug.Log(distance);
+        //Debug.Log(Grid.tileSize);
+        //Debug.Log("is on target: " + isOnTarget);
         if (isOnTarget)
         {
-            Debug.Log("isPlaced");
+            //Debug.Log("isPlaced");
             Grid.PlaceOnGrid(gameObject, true);
+            Grid.CheckTile(gameObject.transform.position);
         }
         isplacingPoint = false;
     }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Grid: MonoBehaviour
+public class Grid : MonoBehaviour
 {
     public int maxX;
     public int maxZ;
@@ -17,12 +17,12 @@ public class Grid: MonoBehaviour
     {
         tileSize = tileSizeSet;
         gridStart = gridStartObject;
-        maxX = (int)(gridEnd.transform.position.x - gridStart.transform.position.x) ;
+        maxX = (int)(gridEnd.transform.position.x - gridStart.transform.position.x);
         maxZ = (int)(gridEnd.transform.position.z - gridStart.transform.position.z);
         int maxTileX = maxX / tileSize;
         int maxTileZ = maxZ / tileSize;
         tiles = new Tile[maxTileX, maxTileZ];
-        for(int i =0; i < maxTileX; i++)
+        for (int i = 0; i < maxTileX; i++)
         {
             for (int j = 0; j < maxTileZ; j++)
             {
@@ -61,6 +61,22 @@ public class Grid: MonoBehaviour
         else
         {
             tiles[posX, posZ].interactable = null;
+        }
+    }
+    public static void CheckTile(Vector3 position)
+    {
+        Vector3 spot = FindSpotOnGrid(position);
+        int posX = (int)spot.x;
+        int posZ = (int)spot.z;
+        bool chefNextToJob = tiles[posX, posZ].currentChef != null && tiles[posX, posZ].interactable != null;
+    /*  Debug.Log("RunCheck");
+        Debug.Log("Chef and Interractable: " + chefNextToJob);
+        Debug.Log(tiles[posX, posZ].currentChef);
+        Debug.Log(tiles[posX, posZ].interactable);*/
+        if (chefNextToJob)
+        {
+            //Debug.Log("");
+            tiles[posX, posZ].interactable.RunJob(tiles[posX, posZ].currentChef);
         }
     }
 }
