@@ -16,6 +16,11 @@ public class Interactable : MonoBehaviour, ICanInteract
     float timer;
     public float iterrationsToIncrease;
     float iterrations;
+    void Awake()
+    {
+        Debug.Log(gameObject);
+        GameManager.interactables.Add(gameObject);
+    }
     public void RunJob(IChef chef)
     {
         //Debug.Log("Run Job");
